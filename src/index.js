@@ -217,8 +217,11 @@ module.exports = class Reader extends Component {
     const { preview, canvas, img } = this.els
 
     // Get image/video dimensions
-    let width = Math.floor(legacyMode ? img.naturalWidth : preview.videoWidth)
-    let height = Math.floor(legacyMode ? img.naturalHeight : preview.videoHeight)
+    let width = Math.floor(legacyMode ? img.naturalWidth : preview.offsetWidth)
+    let height = Math.floor(legacyMode ? img.naturalHeight : preview.offsetHeight)
+
+	canvas.width = width
+	canvas.height = height
 
     // Canvas draw offsets
     let hozOffset = 0
@@ -235,21 +238,7 @@ module.exports = class Reader extends Component {
 
       canvas.width = width
       canvas.height = height
-    }else{
-      // Crop image to fit 1:1 aspect ratio
-      const smallestSize = width < height ? width : height
-      const ratio = resolution / smallestSize
-
-      height = ratio * height
-      width = ratio * width
-
-      vertOffset = (height - resolution) / 2 * -1
-      hozOffset = (width - resolution) / 2 * -1
-
-      canvas.width = resolution
-      canvas.height = resolution
     }
-
 
     const previewIsPlaying = preview &&
       preview.readyState === preview.HAVE_ENOUGH_DATA
@@ -316,10 +305,10 @@ module.exports = class Reader extends Component {
     } = this.props
 
     const containerStyle = {
-      overflow: 'hidden',
+	  overflow: 'hidden',
       position: 'relative',
-      width: '100%',
-      paddingTop: '100%',
+	  width: '100%',
+	  height: '100%',
     }
     const hiddenStyle = { display: 'none' }
     const previewStyle = {
